@@ -12,7 +12,7 @@
                                 <div class="errors">{{ attemptsMsg }}</div>
 
                                 <div class="form-outline form-white mb-2">
-                                    <input type="email" autofocus required  placeholder="Email" id="email" v-model="email" class="form-control form-control-lg" />
+                                    <input type="email" autofocus required placeholder="Email" id="email" v-model="email" class="form-control form-control-lg" />
                                 </div>
 
                                 <div class="form-outline form-white mb-2">
@@ -37,7 +37,8 @@
 </template>
 
 <script>
-let attempts=4
+import axios from 'axios'
+let attempts = 4
 export default {
     name: 'AppLogin',
     data() {
@@ -50,32 +51,35 @@ export default {
         }
     },
     methods: {
-       async login() {
+      async  login() {
+           let result = await axios.get(
+                `http://localhost:3000/users?email=${this.email}&password=${this.password}`
+            );
+            console.log(result)
             //if this account exists
-            if (this.email == "admin@a.com" && this.password == "sasa") {
-                //then push it to Home page 
-                this.$router.push('/')
+            if (result.status == 200 && result.data.length>0) {
+               window.localStorage.setItem("user-info",JSON.stringify(result.data[0]))
+                this.$router.push("/")
+            }
 
-            } else {
+             else {
                 attempts--
                 this.msg = "Invalid username or password"
                 this.attemptsMsg = "You still have " + attempts + " attempts to login ";
-                this.email=''
-                this.password=''
-                
-                }
-                if (attempts == 0) {
-                    this.msg = ''
-                    this.attemptsMsg = ''
-                    document.querySelector("button").disabled = true;
-                    this.$router.push('/register')
-                    
+                this.email = ''
+                this.password = ''
 
-                }
+          
+            if (attempts == 0) {
+                this.msg = ''
+                this.attemptsMsg = ''
+                document.querySelector("button").disabled = true;
+                this.$router.push('/register')
+            }
+          }
         }
-        },
+    }
 }
-
 
 </script>
 
@@ -90,5 +94,4 @@ export default {
     color: red;
     font-weight: bold;
 }
-
 </style>
