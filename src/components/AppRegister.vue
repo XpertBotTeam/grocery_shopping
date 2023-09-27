@@ -59,7 +59,7 @@ export default {
             if (this.password != this.confirmPassword) {
                 this.error.push("Passwords didn't match ")
             }
-            if (this.password != "" && (this.password.length > 8 || this.password.length < 8)) {
+            if (this.password.length > 8 || this.password.length < 8) {
                 this.error.push("Password should be 8 character ")
             }
             else{
@@ -83,6 +83,12 @@ export default {
             }
 
         },
+    },
+    mounted(){
+        let user=localStorage.getItem("user-data")
+        if(user){
+            this.$router.push("/login")
+        }
     }
 }
 </script>
@@ -97,4 +103,5 @@ export default {
 .card {
     background-color: #9EB384;
 }
+
 </style>
